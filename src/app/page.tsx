@@ -1,101 +1,131 @@
-import Image from "next/image";
+'use client';
+
+import { HeatmapStudy } from '@/components/heatmap-study';
+import { HeatmapWorkout } from '@/components/heatmap-workout';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from '@/components/ui/input-otp';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+
+import { addActivity } from '@/lib/db/actions';
+import { Plus } from 'lucide-react';
+import { useState } from 'react';
+import { toast } from 'sonner';
+
+type Year = '2025' | '2026';
+type ActivityType = 'study' | 'workout';
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [year, setYear] = useState<Year>('2025');
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+  const [showOtpDialog, setShowOtpDialog] = useState(false);
+  const [otp, setOtp] = useState('');
+  const [selectedActivity, setSelectedActivity] = useState<ActivityType | null>(
+    null
+  );
+
+  const handleActivitySelect = (type: ActivityType) => {
+    setSelectedActivity(type);
+    setShowOtpDialog(true);
+  };
+
+  const handleAddActivity = async () => {
+    if (otp === '223344' && selectedActivity) {
+      await addActivity(selectedActivity, new Date(), 1);
+      setShowOtpDialog(false);
+      setOtp('');
+      toast.success('Nice');
+      setSelectedActivity(null);
+    } else {
+      toast.error('Wrong password');
+    }
+  };
+
+  return (
+    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 gap-8 font-[family-name:var(--font-geist-sans)]">
+      <main className="flex flex-col gap-8 row-start-2 items-start max-w-full ">
+        <h1 className="text-2xl sm:text-4xl font-bold">
+          Cole&apos;s Daily habits
+        </h1>
+        <ol className="list-inside list-decimal text-sm text-left font-[family-name:var(--font-geist-mono)]">
+          <li className="mb-2">First heatmap is my study progress</li>
+          <li>Second heatmap is my workout progress</li>
+        </ol>
+        <div className="flex gap-2 items-center">
+          <Tabs
+            defaultValue={year}
+            onValueChange={(value) => setYear(value as Year)}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+            <TabsList>
+              <TabsTrigger value="2025">2025</TabsTrigger>
+              <TabsTrigger value="2026">2026</TabsTrigger>
+            </TabsList>
+          </Tabs>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button size={'icon'}>
+                <Plus />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem onClick={() => handleActivitySelect('study')}>
+                Study
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleActivitySelect('workout')}>
+                Workout
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
+
+        <Dialog open={showOtpDialog} onOpenChange={setShowOtpDialog}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Verification Required</DialogTitle>
+              <DialogDescription>
+                Please enter the OTP to add a {selectedActivity} activity
+              </DialogDescription>
+            </DialogHeader>
+            <div className="flex flex-col gap-4">
+              <InputOTP
+                value={otp}
+                onChange={setOtp}
+                maxLength={6}
+                onComplete={handleAddActivity}
+              >
+                <InputOTPGroup>
+                  <InputOTPSlot index={0} />
+                  <InputOTPSlot index={1} />
+                  <InputOTPSlot index={2} />
+                  <InputOTPSlot index={3} />
+                  <InputOTPSlot index={4} />
+                  <InputOTPSlot index={5} />
+                </InputOTPGroup>
+              </InputOTP>
+              <Button onClick={handleAddActivity}>Verify & Add</Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        <HeatmapStudy year={year} />
+        <HeatmapWorkout year={year} />
       </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
     </div>
   );
 }
