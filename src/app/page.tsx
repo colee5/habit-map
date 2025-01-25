@@ -59,7 +59,7 @@ export default function Home() {
 
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 gap-8 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-start max-w-full ">
+      <main className="flex flex-col gap-8 row-start-2 items-start max-w-full overflow-scroll">
         <h1 className="text-2xl sm:text-4xl font-bold">
           Cole&apos;s Daily habits
         </h1>
