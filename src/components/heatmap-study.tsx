@@ -6,6 +6,8 @@ import { useEffect, useState } from 'react';
 
 interface Props {
   year: string;
+  user: 'cole' | 'keki';
+  refresh: number;
 }
 
 interface Activity {
@@ -15,13 +17,13 @@ interface Activity {
 
 const emptyValue = [{ date: '2025/1/25', count: 1 }];
 
-export const HeatmapStudy = ({ year }: Props) => {
+export const HeatmapStudy = ({ year, user }: Props) => {
   const [activities, setActivities] = useState<Activity[]>(emptyValue);
 
   const fetchActivities = async () => {
-    const studyActivities = await fetch('/api/activities?type=study').then(
-      (res) => res.json()
-    );
+    const studyActivities = await fetch(
+      `/api/activities?type=study&user=${user}`
+    ).then((res) => res.json());
 
     const formattedActivities = studyActivities.map(
       (activity: ActivityResponse) => ({
@@ -35,7 +37,8 @@ export const HeatmapStudy = ({ year }: Props) => {
 
   useEffect(() => {
     fetchActivities();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
   return (
     <div className="w-full overflow-auto">

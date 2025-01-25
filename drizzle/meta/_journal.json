@@ -8,6 +8,13 @@
       "when": 1737805549544,
       "tag": "0000_sudden_sandman",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1737809835059,
+      "tag": "0001_windy_black_tarantula",
+      "breakpoints": true
     }
   ]
 }
