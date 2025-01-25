@@ -27,6 +27,8 @@ import { addActivity } from '@/lib/db/actions';
 import { Plus } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { Label } from './ui/label';
+import { Textarea } from './ui/textarea';
 
 type Year = '2025' | '2026';
 type ActivityType = 'study' | 'workout';
@@ -40,17 +42,20 @@ export default function KekiProgress() {
   const [selectedActivity, setSelectedActivity] = useState<ActivityType | null>(
     null
   );
+  const [description, setDescription] = useState('');
 
   const handleActivitySelect = (type: ActivityType) => {
     setSelectedActivity(type);
     setShowOtpDialog(true);
+    setDescription('');
   };
 
   const handleAddActivity = async () => {
     if (otp === '252525' && selectedActivity) {
-      await addActivity(selectedActivity, new Date(), 1, 'keki');
+      await addActivity(selectedActivity, new Date(), 1, 'keki', description);
       setShowOtpDialog(false);
       setOtp('');
+      setDescription('');
       setRefreshTrigger((prev) => prev + 1);
       toast.success('Nice');
       setSelectedActivity(null);
@@ -60,8 +65,8 @@ export default function KekiProgress() {
   };
 
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen py-2 gap-8 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-start max-w-full overflow-scroll">
+    <div className="w-full h-full py-6">
+      <main className="flex flex-col gap-8 items-start max-w-full">
         <h1 className="text-2xl sm:text-4xl font-bold">
           Keki&apos;s Daily habits
         </h1>
@@ -99,12 +104,21 @@ export default function KekiProgress() {
         <Dialog open={showOtpDialog} onOpenChange={setShowOtpDialog}>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Verification Required</DialogTitle>
+              <DialogTitle>Add {selectedActivity} Activity</DialogTitle>
               <DialogDescription>
-                Please enter the OTP to add a {selectedActivity} activity
+                Please describe what you did and enter the OTP to verify
               </DialogDescription>
             </DialogHeader>
             <div className="flex flex-col gap-4">
+              <div className="grid w-full gap-2">
+                <Label htmlFor="description">Description</Label>
+                <Textarea
+                  id="description"
+                  placeholder="What did you do today?"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                />
+              </div>
               <InputOTP
                 value={otp}
                 onChange={setOtp}

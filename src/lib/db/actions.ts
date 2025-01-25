@@ -16,7 +16,8 @@ export async function addActivity(
   type: 'study' | 'workout',
   date: Date,
   count: number,
-  user: 'cole' | 'keki'
+  user: 'cole' | 'keki',
+  description?: string
 ) {
   return await db
     .insert(activities)
@@ -26,6 +27,7 @@ export async function addActivity(
       date: date.toISOString().split('T')[0],
       count,
       user,
+      description,
     })
     .returning();
 }

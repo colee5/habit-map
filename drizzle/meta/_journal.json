@@ -15,6 +15,13 @@
       "when": 1737809835059,
       "tag": "0001_windy_black_tarantula",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1737812866446,
+      "tag": "0002_natural_living_lightning",
+      "breakpoints": true
     }
   ]
 }

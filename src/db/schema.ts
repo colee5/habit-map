@@ -6,6 +6,7 @@ export const activities = pgTable('activities', {
   date: date('date').notNull(),
   count: integer('count').notNull(),
   user: varchar('user').notNull(),
+  description: varchar('description'),
 });
 
 export interface ActivityResponse {
@@ -14,4 +15,5 @@ export interface ActivityResponse {
   id: string;
   type: 'study' | 'workout';
   user: 'cole' | 'keki';
+  description?: string;
 }
