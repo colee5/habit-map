@@ -67,7 +67,7 @@ export default function KekiProgress() {
   return (
     <div className="w-full h-full py-6">
       <main className="flex flex-col gap-8 items-start max-w-full">
-        <h1 className="text-2xl sm:text-4xl font-bold">
+        <h1 className="text-2xl text-black/70 sm:text-4xl font-bold">
           Keki&apos;s Daily habits
         </h1>
         <ol className="list-inside list-decimal text-sm text-left font-[family-name:var(--font-geist-mono)]">

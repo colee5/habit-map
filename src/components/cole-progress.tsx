@@ -65,9 +65,9 @@ export default function ColeProgress() {
   };
 
   return (
-    <div className="w-full h-full py-6">
+    <div className="w-full h-full pb-6 pt-24">
       <main className="flex flex-col gap-8 items-start max-w-full">
-        <h1 className="text-2xl sm:text-4xl font-bold">
+        <h1 className="text-2xl text-black/70 sm:text-4xl font-bold">
           Cole&apos;s Daily habits
         </h1>
         <ol className="list-inside list-decimal text-sm text-left font-[family-name:var(--font-geist-mono)]">
