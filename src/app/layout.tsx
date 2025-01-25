@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Cole's daily habits",
-  description: 'Habit heatmap activity list for Cole',
+  title: 'Daily habits tracker',
+  description: 'Habit heatmap activity list for Cole and Keki',
 };
 
 export default function RootLayout({

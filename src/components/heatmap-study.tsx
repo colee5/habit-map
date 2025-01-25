@@ -62,7 +62,7 @@ const renderBlock = (
                 {act.description ? (
                   <p>- {act.description}</p>
                 ) : (
-                  <p>Activity completed</p>
+                  <p>- Activity completed</p>
                 )}
               </div>
             ))}
