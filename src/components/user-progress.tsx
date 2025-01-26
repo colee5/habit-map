@@ -22,7 +22,6 @@ import {
   InputOTPSlot,
 } from '@/components/ui/input-otp';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-
 import { addActivity } from '@/lib/db/actions';
 import { Plus } from 'lucide-react';
 import { useState } from 'react';
@@ -32,12 +31,22 @@ import { Textarea } from './ui/textarea';
 
 type Year = '2025' | '2026';
 type ActivityType = 'study' | 'workout';
+type User = 'cole' | 'keki';
 
-export default function ColeProgress() {
+interface ProgressProps {
+  user: User;
+  className?: string;
+}
+
+const OTP_CODES = {
+  cole: '223444',
+  keki: '252525',
+};
+
+export default function UserProgress({ user, className = '' }: ProgressProps) {
   const [year, setYear] = useState<Year>('2025');
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [description, setDescription] = useState('');
-
   const [showOtpDialog, setShowOtpDialog] = useState(false);
   const [otp, setOtp] = useState('');
   const [selectedActivity, setSelectedActivity] = useState<ActivityType | null>(
@@ -51,8 +60,8 @@ export default function ColeProgress() {
   };
 
   const handleAddActivity = async () => {
-    if (otp === '223444' && selectedActivity) {
-      await addActivity(selectedActivity, new Date(), 1, 'cole', description);
+    if (otp === OTP_CODES[user] && selectedActivity) {
+      await addActivity(selectedActivity, new Date(), 1, user, description);
       setShowOtpDialog(false);
       setOtp('');
       setDescription('');
@@ -65,10 +74,10 @@ export default function ColeProgress() {
   };
 
   return (
-    <div className="w-full h-full pb-6 pt-24">
+    <div className={`w-full h-full ${className}`}>
       <main className="flex flex-col gap-8 items-start max-w-full">
         <h1 className="text-2xl text-black/70 sm:text-4xl font-bold">
-          Cole&apos;s Daily habits
+          {user.charAt(0).toUpperCase() + user.slice(1)}&apos;s Daily habits
         </h1>
         <ol className="list-inside list-decimal text-sm text-left font-[family-name:var(--font-geist-mono)]">
           <li className="mb-2">First heatmap is my study progress</li>
@@ -139,8 +148,8 @@ export default function ColeProgress() {
           </DialogContent>
         </Dialog>
 
-        <HeatmapStudy year={year} user="cole" refresh={refreshTrigger} />
-        <HeatmapWorkout year={year} user="cole" refresh={refreshTrigger} />
+        <HeatmapStudy year={year} user={user} refresh={refreshTrigger} />
+        <HeatmapWorkout year={year} user={user} refresh={refreshTrigger} />
       </main>
     </div>
   );

@@ -163,7 +163,17 @@ export const HeatmapStudy = ({ year, user, refresh }: Props) => {
     <TooltipProvider delayDuration={100}>
       <div className="w-full overflow-auto">
         <ActivityCalendar
-          data={activities}
+          data={
+            activities.length
+              ? activities
+              : [
+                  {
+                    date: '2025-02-26',
+                    count: 1,
+                    level: 1,
+                  },
+                ]
+          }
           blockSize={10}
           blockRadius={2.5}
           loading={isLoading}

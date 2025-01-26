@@ -1,8 +1,7 @@
 'use client';
 
-import ColeProgress from '@/components/cole-progress';
-import KekiProgress from '@/components/keki-progress';
 import { Separator } from '@/components/ui/separator';
+import UserProgress from '@/components/user-progress';
 
 export default function Home() {
   return (
@@ -17,11 +16,11 @@ export default function Home() {
               accident. Missing twice is the start of a new habit - breaking it.
             </p>
             <Separator className="mt-6" />
-            <ColeProgress />
+            <UserProgress user="cole" className="pb-6 pt-24" />
           </div>
           <Separator className="stroke-black" orientation="horizontal" />
           <div className="w-full">
-            <KekiProgress />
+            <UserProgress user="keki" className="py-6" />
           </div>
         </div>
       </div>
