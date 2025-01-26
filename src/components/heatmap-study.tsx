@@ -1,6 +1,7 @@
 'use client';
 
 import { ActivityResponse } from '@/db/schema';
+import { generateEmptyYearData } from '@/lib/utils';
 import { useEffect, useState } from 'react';
 import ActivityCalendar, {
   BlockElement,
@@ -26,7 +27,7 @@ interface ActivityWithDescription {
   type: string;
 }
 
-interface ExtendedActivity extends LibActivity {
+export interface ExtendedActivity extends LibActivity {
   description?: string;
   activities?: ActivityWithDescription[];
 }
@@ -163,17 +164,7 @@ export const HeatmapStudy = ({ year, user, refresh }: Props) => {
     <TooltipProvider delayDuration={100}>
       <div className="w-full overflow-auto">
         <ActivityCalendar
-          data={
-            activities.length
-              ? activities
-              : [
-                  {
-                    date: '2025-02-26',
-                    count: 1,
-                    level: 1,
-                  },
-                ]
-          }
+          data={activities.length ? activities : generateEmptyYearData(year)}
           blockSize={10}
           blockRadius={2.5}
           loading={isLoading}
