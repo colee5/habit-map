@@ -1,11 +1,11 @@
 'use client';
 
-import ActivityCalendar, {
-  Activity as LibActivity,
-  BlockElement,
-} from 'react-activity-calendar';
 import { ActivityResponse } from '@/db/schema';
 import { useEffect, useState } from 'react';
+import ActivityCalendar, {
+  BlockElement,
+  Activity as LibActivity,
+} from 'react-activity-calendar';
 import {
   Tooltip,
   TooltipContent,
@@ -82,7 +82,6 @@ export const HeatmapStudy = ({ year, user, refresh }: Props) => {
   const generateFullYearData = (
     studyActivities: ActivityResponse[]
   ): ExtendedActivity[] => {
-    // Group activities by date
     const activitiesByDate = new Map<string, ActivityWithDescription[]>();
 
     studyActivities.forEach((activity) => {
@@ -126,7 +125,6 @@ export const HeatmapStudy = ({ year, user, refresh }: Props) => {
 
   const fetchActivities = async () => {
     try {
-      setIsLoading(true);
       const studyActivities = await fetch(
         `/api/activities?type=study&user=${user}`
       ).then((res) => res.json());
@@ -137,8 +135,6 @@ export const HeatmapStudy = ({ year, user, refresh }: Props) => {
       console.error('Error fetching activities:', error);
       const fullYearData = generateFullYearData([]);
       setActivities(fullYearData);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -151,7 +147,15 @@ export const HeatmapStudy = ({ year, user, refresh }: Props) => {
   };
 
   useEffect(() => {
+    setIsLoading(true);
+
     fetchActivities();
+
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2200);
+
+    return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, refresh]);
 

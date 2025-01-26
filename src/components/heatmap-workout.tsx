@@ -126,7 +126,6 @@ export const HeatmapWorkout = ({ year, user, refresh }: Props) => {
 
   const fetchActivities = async () => {
     try {
-      setIsLoading(true);
       const workoutActivities = await fetch(
         `/api/activities?type=workout&user=${user}`
       ).then((res) => res.json());
@@ -137,8 +136,6 @@ export const HeatmapWorkout = ({ year, user, refresh }: Props) => {
       console.error('Error fetching activities:', error);
       const fullYearData = generateFullYearData([]);
       setActivities(fullYearData);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -151,7 +148,15 @@ export const HeatmapWorkout = ({ year, user, refresh }: Props) => {
   };
 
   useEffect(() => {
+    setIsLoading(true);
+
     fetchActivities();
+
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2200);
+
+    return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, refresh]);
 

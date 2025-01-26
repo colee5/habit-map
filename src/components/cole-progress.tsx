@@ -51,7 +51,7 @@ export default function ColeProgress() {
   };
 
   const handleAddActivity = async () => {
-    if (otp === '223344' && selectedActivity) {
+    if (otp === '223444' && selectedActivity) {
       await addActivity(selectedActivity, new Date(), 1, 'cole', description);
       setShowOtpDialog(false);
       setOtp('');
