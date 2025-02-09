@@ -38,11 +38,6 @@ interface ProgressProps {
   className?: string;
 }
 
-const OTP_CODES = {
-  cole: '223444',
-  keki: '252525',
-};
-
 export default function UserProgress({ user, className = '' }: ProgressProps) {
   const [year, setYear] = useState<Year>('2025');
   const [refreshTrigger, setRefreshTrigger] = useState(0);
@@ -60,16 +55,32 @@ export default function UserProgress({ user, className = '' }: ProgressProps) {
   };
 
   const handleAddActivity = async () => {
-    if (otp === OTP_CODES[user] && selectedActivity) {
-      await addActivity(selectedActivity, new Date(), 1, user, description);
-      setShowOtpDialog(false);
-      setOtp('');
-      setDescription('');
-      setRefreshTrigger((prev) => prev + 1);
-      toast.success('Nice');
-      setSelectedActivity(null);
-    } else {
-      toast.error('Wrong password');
+    // Todo: should be refactored and this should be
+    // handled by autherization, this is just a quick fix
+    try {
+      const response = await fetch('/api/verify', {
+        method: 'POST',
+        body: JSON.stringify({ otp, user }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const { isValid } = await response.json();
+
+      if (isValid && selectedActivity) {
+        await addActivity(selectedActivity, new Date(), 1, user, description);
+        setShowOtpDialog(false);
+        setOtp('');
+        setDescription('');
+        setRefreshTrigger((prev) => prev + 1);
+        toast.success('Nice');
+        setSelectedActivity(null);
+      } else {
+        toast.error('Wrong password');
+      }
+    } catch {
+      toast.error('Something went wrong');
     }
   };
 
