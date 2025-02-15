@@ -19,12 +19,14 @@ export async function addActivity(
   user: 'cole' | 'keki',
   description?: string
 ) {
+  const localDate = date.toLocaleDateString('en-CA');
+
   return await db
     .insert(activities)
     .values({
       id: crypto.randomUUID(),
       type,
-      date: date.toISOString().split('T')[0],
+      date: localDate,
       count,
       user,
       description,

@@ -21,11 +21,18 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from '@/components/ui/input-otp';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { addActivity } from '@/lib/db/actions';
-import { Plus } from 'lucide-react';
+import { format } from 'date-fns';
+import { CalendarIcon, Plus } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { Calendar } from './ui/calendar';
 import { Label } from './ui/label';
 import { Textarea } from './ui/textarea';
 
@@ -47,6 +54,7 @@ export default function UserProgress({ user, className = '' }: ProgressProps) {
   const [selectedActivity, setSelectedActivity] = useState<ActivityType | null>(
     null
   );
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
   const handleActivitySelect = (type: ActivityType) => {
     setSelectedActivity(type);
@@ -69,13 +77,14 @@ export default function UserProgress({ user, className = '' }: ProgressProps) {
       const { isValid } = await response.json();
 
       if (isValid && selectedActivity) {
-        await addActivity(selectedActivity, new Date(), 1, user, description);
+        await addActivity(selectedActivity, selectedDate, 1, user, description);
         setShowOtpDialog(false);
         setOtp('');
         setDescription('');
         setRefreshTrigger((prev) => prev + 1);
         toast.success('Nice');
         setSelectedActivity(null);
+        setSelectedDate(new Date());
       } else {
         toast.error('Wrong password');
       }
@@ -126,10 +135,42 @@ export default function UserProgress({ user, className = '' }: ProgressProps) {
             <DialogHeader>
               <DialogTitle>Add {selectedActivity} Activity</DialogTitle>
               <DialogDescription>
-                Please describe what you did and enter the OTP to verify
+                Please select a date, describe what you did and enter the OTP to
+                verify
               </DialogDescription>
             </DialogHeader>
             <div className="flex flex-col gap-4">
+              <div className="grid w-full gap-2">
+                <Label htmlFor="date">Date</Label>
+                <Popover modal={true}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={`w-full justify-start text-left font-normal ${
+                        !selectedDate && 'text-muted-foreground'
+                      }`}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {selectedDate
+                        ? format(selectedDate, 'PPP')
+                        : 'Pick a date'}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent
+                    className="w-auto p-0"
+                    align="start"
+                    sideOffset={4}
+                  >
+                    <Calendar
+                      mode="single"
+                      selected={selectedDate}
+                      onSelect={(date) => date && setSelectedDate(date)}
+                      disabled={(date) => date > new Date()}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
               <div className="grid w-full gap-2">
                 <Label htmlFor="description">Description</Label>
                 <Textarea
