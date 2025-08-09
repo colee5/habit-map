@@ -13,7 +13,7 @@ export interface ActivityResponse {
   date: Date;
   count: number;
   id: string;
-  type: 'study' | 'workout';
+  type: 'study' | 'workout' | 'plan';
   user: 'cole' | 'keki';
   description?: string;
 }

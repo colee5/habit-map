@@ -60,32 +60,28 @@ const renderBlock = (
           <div className="text-xs">
             {activities.map((act, index) => (
               <div key={index}>
-                {act.description ? (
-                  <p>- {act.description}</p>
-                ) : (
-                  <p>- Activity completed</p>
-                )}
+                <p>- Planning session completed</p>
               </div>
             ))}
           </div>
         ) : (
-          <p className="text-sm">Activity completed</p>
+          <p className="text-sm">Planning session completed</p>
         )}
       </TooltipContent>
     </Tooltip>
   );
 };
 
-export const HeatmapStudy = ({ year, user, refresh }: Props) => {
+export const HeatmapPlan = ({ year, user, refresh }: Props) => {
   const [activities, setActivities] = useState<ExtendedActivity[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const generateFullYearData = (
-    studyActivities: ActivityResponse[]
+    planActivities: ActivityResponse[]
   ): ExtendedActivity[] => {
     const activitiesByDate = new Map<string, ActivityWithDescription[]>();
 
-    studyActivities.forEach((activity) => {
+    planActivities.forEach((activity) => {
       const dateStr = activity.date.toString().split('T')[0];
       if (!activitiesByDate.has(dateStr)) {
         activitiesByDate.set(dateStr, []);
@@ -126,11 +122,11 @@ export const HeatmapStudy = ({ year, user, refresh }: Props) => {
 
   const fetchActivities = async () => {
     try {
-      const studyActivities = await fetch(
-        `/api/activities?type=study&user=${user}`
+      const planActivities = await fetch(
+        `/api/activities?type=plan&user=${user}`
       ).then((res) => res.json());
 
-      const fullYearData = generateFullYearData(studyActivities);
+      const fullYearData = generateFullYearData(planActivities);
       setActivities(fullYearData);
     } catch (error) {
       console.error('Error fetching activities:', error);

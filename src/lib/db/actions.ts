@@ -3,7 +3,7 @@ import { activities } from '@/db/schema';
 import { and, eq } from 'drizzle-orm';
 
 export async function getActivities(
-  type: 'study' | 'workout',
+  type: 'study' | 'workout' | 'plan',
   user: 'cole' | 'keki'
 ) {
   return await db
@@ -13,7 +13,7 @@ export async function getActivities(
 }
 
 export async function addActivity(
-  type: 'study' | 'workout',
+  type: 'study' | 'workout' | 'plan',
   date: Date,
   count: number,
   user: 'cole' | 'keki',

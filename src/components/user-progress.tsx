@@ -1,5 +1,6 @@
 'use client';
 
+import { HeatmapPlan } from '@/components/heatmap-plan';
 import { HeatmapStudy } from '@/components/heatmap-study';
 import { HeatmapWorkout } from '@/components/heatmap-workout';
 import { Button } from '@/components/ui/button';
@@ -37,7 +38,7 @@ import { Label } from './ui/label';
 import { Textarea } from './ui/textarea';
 
 type Year = '2025' | '2026';
-type ActivityType = 'study' | 'workout';
+type ActivityType = 'study' | 'workout' | 'plan';
 type User = 'cole' | 'keki';
 
 interface ProgressProps {
@@ -63,8 +64,6 @@ export default function UserProgress({ user, className = '' }: ProgressProps) {
   };
 
   const handleAddActivity = async () => {
-    // Todo: should be refactored and this should be
-    // handled by autherization, this is just a quick fix
     try {
       const response = await fetch('/api/verify', {
         method: 'POST',
@@ -77,7 +76,16 @@ export default function UserProgress({ user, className = '' }: ProgressProps) {
       const { isValid } = await response.json();
 
       if (isValid && selectedActivity) {
-        await addActivity(selectedActivity, selectedDate, 1, user, description);
+        const activityDescription =
+          selectedActivity === 'plan' ? '' : description;
+
+        await addActivity(
+          selectedActivity,
+          selectedDate,
+          1,
+          user,
+          activityDescription
+        );
         setShowOtpDialog(false);
         setOtp('');
         setDescription('');
@@ -92,7 +100,6 @@ export default function UserProgress({ user, className = '' }: ProgressProps) {
       toast.error('Something went wrong');
     }
   };
-
   return (
     <div className={`w-full h-full ${className}`}>
       <main className="flex flex-col gap-8 items-start max-w-full">
@@ -101,7 +108,8 @@ export default function UserProgress({ user, className = '' }: ProgressProps) {
         </h1>
         <ol className="list-inside list-decimal text-sm text-left font-[family-name:var(--font-geist-mono)]">
           <li className="mb-2">First heatmap is my study progress</li>
-          <li>Second heatmap is my workout progress</li>
+          <li className="mb-2">Second heatmap is my workout progress</li>
+          <li>Second heatmap is my --- progress</li>
         </ol>
         <div className="flex gap-2 items-center">
           <Tabs
@@ -126,6 +134,9 @@ export default function UserProgress({ user, className = '' }: ProgressProps) {
               <DropdownMenuItem onClick={() => handleActivitySelect('workout')}>
                 Workout
               </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleActivitySelect('plan')}>
+                Plan
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
@@ -135,8 +146,11 @@ export default function UserProgress({ user, className = '' }: ProgressProps) {
             <DialogHeader>
               <DialogTitle>Add {selectedActivity} Activity</DialogTitle>
               <DialogDescription>
-                Please select a date, describe what you did and enter the OTP to
-                verify
+                Please select a date
+                {selectedActivity !== 'plan'
+                  ? ', describe what you did'
+                  : ''}{' '}
+                and enter the OTP to verify
               </DialogDescription>
             </DialogHeader>
             <div className="flex flex-col gap-4">
@@ -171,15 +185,19 @@ export default function UserProgress({ user, className = '' }: ProgressProps) {
                   </PopoverContent>
                 </Popover>
               </div>
-              <div className="grid w-full gap-2">
-                <Label htmlFor="description">Description</Label>
-                <Textarea
-                  id="description"
-                  placeholder="What did you do today?"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                />
-              </div>
+
+              {selectedActivity !== 'plan' && (
+                <div className="grid w-full gap-2">
+                  <Label htmlFor="description">Description</Label>
+                  <Textarea
+                    id="description"
+                    placeholder="What did you do today?"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                  />
+                </div>
+              )}
+
               <InputOTP
                 value={otp}
                 onChange={setOtp}
@@ -202,6 +220,7 @@ export default function UserProgress({ user, className = '' }: ProgressProps) {
 
         <HeatmapStudy year={year} user={user} refresh={refreshTrigger} />
         <HeatmapWorkout year={year} user={user} refresh={refreshTrigger} />
+        <HeatmapPlan year={year} user={user} refresh={refreshTrigger} />
       </main>
     </div>
   );

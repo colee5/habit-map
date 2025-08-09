@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const type = searchParams.get('type') as 'study' | 'workout';
+  const type = searchParams.get('type') as 'study' | 'workout' | 'plan';
   const user = searchParams.get('user') as 'cole' | 'keki';
 
   try {

@@ -70,7 +70,10 @@ export const HeatmapWorkout = ({ year, user, refresh }: Props) => {
           fontSize={11}
           renderBlock={renderBlock}
           theme={{
-            dark: ['#EAEDF0', '#FFB5B5', '#FF8989', '#FF5A5A', '#CC4747'],
+            // Red
+            // dark: ['#EAEDF0', '#FFB5B5', '#FF8989', '#FF5A5A', '#CC4747'],
+            // Green
+            dark: ['#EAEDF0', '#C6E48B', '#7BC96F', '#239A3B', '#196127'],
           }}
           hideColorLegend={false}
           showWeekdayLabels={false}
