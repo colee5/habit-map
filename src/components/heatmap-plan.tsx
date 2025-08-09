@@ -60,7 +60,7 @@ const renderBlock = (
           <div className="text-xs">
             {activities.map((act, index) => (
               <div key={index}>
-                <p>- Planning session completed</p>
+                <p>(+)</p>
               </div>
             ))}
           </div>
